@@ -55,7 +55,7 @@ trainer = Trainer(
 
 trainer.train()
 
-model.save_pretrained("./trained_model")
-tokenizer.save_pretrained("./trained_model")
+model.save_pretrained("./BERT_trained")
+tokenizer.save_pretrained("./BERT_trained")
 
 # results = trainer.evaluate(tokenized_test)
