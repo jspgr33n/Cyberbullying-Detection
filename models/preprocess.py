@@ -1,11 +1,13 @@
+import os
 import pandas as pd
 import numpy as np
 import re
-import os
 import nltk
 from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, classification_report
+from gensim.models import Word2Vec  # Use Word2Vec for training word embeddings
 
 # Get the current working directory
 current_directory = os.getcwd()
@@ -39,29 +41,43 @@ def preprocess_text(text):
     stop_words = set(stopwords.words('english'))
     words = [word for word in words if word not in stop_words]
 
-    # Join the cleaned words back into a single string
-    cleaned_text = ' '.join(words)
+    return words
 
-    return cleaned_text
+# Apply text preprocessing to the 'tweet_text' column and create a new 'tokens' column
+df['tokens'] = df['tweet_text'].apply(preprocess_text)
 
-# Apply text preprocessing to the 'tweet_text' column and create a new 'text' column
-df['tweet_text'] = df['tweet_text'].apply(preprocess_text)
-
-# Changing cyberbullying_type to binary variable (0 for non-CB, 1 for others)
+# Set 'cyberbullying_type' to 0 for 'not_cyberbullying' and 1 for everything else
 df['cyberbullying_type'] = df['cyberbullying_type'].apply(lambda x: 0 if x == 'not_cyberbullying' else 1)
 
-# Save the updated DataFrame to a new CSV file
-output_csv_file = os.path.join(data_folder, 'updated_cyberbullying_data.csv')
-df.to_csv(output_csv_file, index=False)
-
 # Split the dataset into training and testing sets
-X = df['tweet_text']  # Text data
-y = df['cyberbullying_type']  # Labels (0 for non-cyberbullying, 1 for cyberbullying)
+X = df['tokens']  # Text data
+y = df['cyberbullying_type']  # Labels (0 for not_cyberbullying, 1 for cyberbullying)
 
-# Split data into 70% training and 30% testing
-xTrain, xTest, yTrain, yTest = train_test_split(X, y, test_size=0.3, random_state=334)
+# Split data into 80% training and 20% testing
+xTrain, xTest, yTrain, yTest = train_test_split(X, y, test_size=0.2, random_state=334)
 
-# Feature extraction using TF-IDF
-tfidf_vectorizer = TfidfVectorizer(max_features=5000)  # You can adjust the number of features as needed
-X_train_tfidf = tfidf_vectorizer.fit_transform(xTrain)
-X_test_tfidf = tfidf_vectorizer.transform(xTest)
+# Train Word2Vec word embeddings on the training set
+word2vec_model = Word2Vec(xTrain, vector_size=100, window=5, min_count=1, sg=0)  # Adjust parameters as needed
+
+# Function to get document embeddings
+def get_document_embedding(tokens, model):
+    # Filter tokens that are present in the Word2Vec model's vocabulary
+    valid_tokens = [token for token in tokens if token in model.wv.index_to_key]
+    
+    # If no valid tokens are found, return a zero vector
+    if not valid_tokens:
+        return np.zeros(model.vector_size)
+    
+    # Calculate the mean of word vectors for the valid tokens
+    embeddings = [model.wv[token] for token in valid_tokens]
+    doc_embedding = np.mean(embeddings, axis=0)
+    
+    return doc_embedding
+
+# Apply the function to create document embeddings
+xTrain_embeddings = xTrain.apply(lambda x: get_document_embedding(x, word2vec_model))
+xTest_embeddings = xTest.apply(lambda x: get_document_embedding(x, word2vec_model))
+
+# Save the updated DataFrame to a new CSV file (if needed)
+output_csv_file = os.path.join(data_folder, 'updated_cyberbullying_data_word2vec_embedding.csv')
+df.to_csv(output_csv_file, index=False)
