@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, f1_score, classification_report, roc
 from gensim.models import Word2Vec
 import matplotlib.pyplot as plt
 
-# Get the current working directory
+# Get the current working directory, should be within models folder for code to work properly
 current_directory = os.getcwd()
 
 # Move up one level to the parent folder
@@ -52,31 +52,41 @@ xTrain, xTest, yTrain, yTest = train_test_split(df['document_embeddings'].tolist
 # Define a range of k values for KNN
 k_values = list(range(1, 21))
 
-# Initialize lists to store evaluation metrics
+# Initialize lists to store evaluation metrics and accuracy scores
 accuracy_scores = []
 f1_scores = []
 roc_aucs = []
 
-# Initialize variables to track the best k and its corresponding accuracy
+# Initialize variables to track the best k, its corresponding F1 score, and accuracy
 best_k = None
+best_f1 = -1.0
 best_accuracy = -1.0
 
 # Train KNN models for different k values and evaluate them
-for k in k_values:
+for i, k in enumerate(k_values):
     knn_classifier = KNeighborsClassifier(n_neighbors=k)
     knn_classifier.fit(xTrain, yTrain)
     y_pred = knn_classifier.predict(xTest)
+    
+    # Calculate F1 score
+    f1 = f1_score(yTest, y_pred)
+    f1_scores.append(f1)
     
     # Calculate accuracy
     accuracy = accuracy_score(yTest, y_pred)
     accuracy_scores.append(accuracy)
     
-    # Update best_k and best_accuracy if a better accuracy is found
-    if accuracy > best_accuracy:
+    # Update best_k and best_f1 if a better F1 score is found
+    if f1 > best_f1:
         best_k = k
+        best_f1 = f1
         best_accuracy = accuracy
+    
+    # Print progress and percentage completion
+    progress = (i + 1) / len(k_values) * 100
+    print(f"Progress: {progress:.2f}%")
 
-# Train the KNN model with the best k value based on accuracy
+# Train the KNN model with the best k value based on F1 score
 best_knn_classifier = KNeighborsClassifier(n_neighbors=best_k)
 best_knn_classifier.fit(xTrain, yTrain)
 
@@ -87,16 +97,19 @@ classification_rep = classification_report(yTest, y_pred_best)
 fpr_best, tpr_best, _ = roc_curve(yTest, best_knn_classifier.predict_proba(xTest)[:,1])
 roc_auc_best = auc(fpr_best, tpr_best)
 
-# Plot accuracy for different k values
+# Plot F1 score for different k values
 plt.figure(figsize=(6, 4))
-plt.plot(k_values, accuracy_scores, marker='o', linestyle='-')
+plt.plot(k_values, f1_scores, marker='o', linestyle='-', label='F1 Score')
+plt.plot(k_values, accuracy_scores, marker='o', linestyle='-', label='Accuracy')  # Adding accuracy to the plot
 plt.xlabel('K Value')
-plt.ylabel('Accuracy')
-plt.title('Accuracy vs. K Value')
+plt.ylabel('Score')
+plt.title('F1 Score and Accuracy vs. K Value')
+plt.legend()
 plt.show()
 
 # Display the best k value and evaluation metrics
-print(f"Best K Value (Based on Accuracy): {best_k}")
+print(f"Best K Value (Based on F1 Score): {best_k}")
+print(f"F1 Score: {best_f1:.2f}")
 print(f"Accuracy: {best_accuracy:.2f}")
 print(f"Classification Report:\n{classification_rep}")
 
