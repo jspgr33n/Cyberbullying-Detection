@@ -6,7 +6,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report
 
 # Load the dataset
-df = pd.read_csv('../data/train_data_updated_cyberbullying.csv')
+df = pd.read_csv('../data/updated_cyberbullying_data.csv')
 
 print(df.head)
 # Assuming 'text' column contains preprocessed text and 'label' column contains labels
