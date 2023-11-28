@@ -1,16 +1,18 @@
 from transformers import BertTokenizer, BertForSequenceClassification, Trainer, TrainingArguments, DataCollatorWithPadding
 from datasets import load_dataset
 import torch
-from sklearn.utils.class_weight import compute_class_weight
-import numpy as np
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForSequenceClassification.from_pretrained('bert-base-uncased')
 
 def tokenize_function(examples):
-    return tokenizer(examples['tweet_text'], padding='max_length', truncation=True, max_length=128)
+    # Assuming 'tweet_text' is the key for your text data
+    texts = examples['tweet_text']
+    # Ensure all texts are strings and handle missing or anomalous data
+    texts = [text if isinstance(text, str) else "" for text in texts]
+    return tokenizer(texts, padding='max_length', truncation=True, max_length=128)
 
-file_path = '../data/train_data.csv'  
+file_path = '../data/train_data_updated_cyberbullying.csv'  
 dataset = load_dataset('csv', data_files={'train': file_path})
 
 train_valid_split = dataset['train'].train_test_split(test_size=0.2)
@@ -31,16 +33,6 @@ tokenized_train.set_format(type="torch", columns=["input_ids", "attention_mask",
 tokenized_valid.set_format(type="torch", columns=["input_ids", "attention_mask", "token_type_ids", "labels"])
 
 # tokenized_test.set_format(type="torch", columns=["input_ids", "attention_mask", "token_type_ids", "labels"])
-
-labels = tokenized_train['labels'].numpy()
-
-class_weights = compute_class_weight(class_weight = 'balanced',
-                                      classes= np.unique(labels),
-                                      y = labels)
-
-class_weights_dict = dict(zip(np.unique(labels), class_weights))
-
-class_weights_tensor = torch.tensor(list(class_weights_dict.values()), dtype=torch.float32) 
 
 training_args = TrainingArguments(
     output_dir="./results",
@@ -67,7 +59,7 @@ trainer = Trainer(
 
 trainer.train()
 
-model.save_pretrained("./BERT_test_trained")
-tokenizer.save_pretrained("./BERT_test_trained")
+model.save_pretrained("./BERT2_trained")
+tokenizer.save_pretrained("./BERT2_trained")
 
 # results = trainer.evaluate(tokenized_test)

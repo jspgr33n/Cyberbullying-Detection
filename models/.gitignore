@@ -1,4 +1,6 @@
 BERT_trained/
+BERT_test_trained/
+BERT2_trained/
 RoBERTa_trained/
 twhin_trained/
 custom_classifier_state.pth
