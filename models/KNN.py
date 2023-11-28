@@ -50,7 +50,7 @@ df['document_embeddings'] = df['tokens'].apply(lambda x: get_document_embedding(
 xTrain, xTest, yTrain, yTest = train_test_split(df['document_embeddings'].tolist(), y, test_size=0.2, random_state=334)
 
 # Define a range of k values for KNN
-k_values = list(range(1, 21))
+k_values = list(range(1, 31))
 
 # Initialize lists to store evaluation metrics and accuracy scores
 accuracy_scores = []
@@ -103,6 +103,7 @@ plt.plot(k_values, f1_scores, marker='o', linestyle='-', label='F1 Score')
 plt.plot(k_values, accuracy_scores, marker='o', linestyle='-', label='Accuracy')  # Adding accuracy to the plot
 plt.xlabel('K Value')
 plt.ylabel('Score')
+plt.xticks(k_values, 5)
 plt.title('F1 Score and Accuracy vs. K Value')
 plt.legend()
 plt.show()
