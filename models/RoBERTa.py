@@ -17,7 +17,6 @@ valid_dataset = train_valid_split['test']
 
 # test_dataset = test_valid['test']
 
-# Tokenize the datasets
 tokenized_train = train_dataset.map(tokenize_function, batched=True)
 tokenized_valid = valid_dataset.map(tokenize_function, batched=True)
 

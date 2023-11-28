@@ -1,0 +1,7 @@
+@article{zhang2022twhin,
+  title={TwHIN-BERT: A Socially-Enriched Pre-trained Language Model for Multilingual Tweet Representations},
+  author={Zhang, Xinyang and Malkov, Yury and Florez, Omar and Park, Serim and McWilliams, Brian and Han, Jiawei and El-Kishky, Ahmed},
+  journal={arXiv preprint arXiv:2209.07562},
+  year={2022}
+}
+
