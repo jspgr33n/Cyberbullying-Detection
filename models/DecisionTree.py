@@ -6,19 +6,25 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report
 
 # Load the dataset
-df = pd.read_csv('updated_cyberbullying_data.csv')
+df = pd.read_csv('../data/train_data_updated_cyberbullying.csv')
 
+print(df.head)
 # Assuming 'text' column contains preprocessed text and 'label' column contains labels
-texts = df['text'].apply(lambda x: x.split())  # Splitting preprocessed text into words
-labels = df['label'].values
+df['tweet_text'] = df['tweet_text'].fillna('')
+
+texts = df['tweet_text'].apply(lambda x: x.split())  # Splitting preprocessed text into words
+labels = df['cyberbullying_type'].values
 
 # Train Word2Vec model
 word2vec = Word2Vec(sentences=texts, vector_size=100, window=5, min_count=1, workers=4)
 
 # Convert texts to average Word2Vec vectors
 def text_to_avg_vector(text):
-    vector = np.mean([word2vec.wv[word] for word in text if word in word2vec.wv], axis=0)
-    return vector
+    vectors = [word2vec.wv[word] for word in text if word in word2vec.wv]
+    if not vectors:
+        # Return a vector of zeros if the text has no valid words
+        return np.zeros(word2vec.vector_size)
+    return np.mean(vectors, axis=0)
 
 X = np.array([text_to_avg_vector(text) for text in texts])
 y = np.array(labels)
