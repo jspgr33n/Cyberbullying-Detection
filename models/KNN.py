@@ -6,7 +6,7 @@ import nltk
 from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, f1_score, classification_report, roc_curve, auc
+from sklearn.metrics import accuracy_score, f1_score, classification_report, precision_recall_curve, auc
 from gensim.models import Word2Vec
 import matplotlib.pyplot as plt
 
@@ -18,7 +18,7 @@ parent_directory = os.path.dirname(current_directory)
 
 # Define the path to the data folder and the dataset file
 data_folder = os.path.join(parent_directory, 'data')
-data_file = os.path.join(data_folder, 'updated_cyberbullying_data_word2vec_embedding.csv')
+data_file = os.path.join(data_folder, 'removed_knn_csv.csv')
 df = pd.read_csv(os.path.join(data_folder, data_file))
 
 # Split the dataset into features (X) and labels (y)
@@ -50,12 +50,12 @@ df['document_embeddings'] = df['tokens'].apply(lambda x: get_document_embedding(
 xTrain, xTest, yTrain, yTest = train_test_split(df['document_embeddings'].tolist(), y, test_size=0.2, random_state=334)
 
 # Define a range of k values for KNN
-k_values = list(range(1, 31))
+k_values = list(range(1, 31, 2))
 
 # Initialize lists to store evaluation metrics and accuracy scores
 accuracy_scores = []
 f1_scores = []
-roc_aucs = []
+pr_aucs = []
 
 # Initialize variables to track the best k, its corresponding F1 score, and accuracy
 best_k = None
@@ -76,6 +76,11 @@ for i, k in enumerate(k_values):
     accuracy = accuracy_score(yTest, y_pred)
     accuracy_scores.append(accuracy)
     
+    # Calculate precision and recall for the best model
+    precision, recall, _ = precision_recall_curve(yTest, knn_classifier.predict_proba(xTest)[:,1])
+    pr_auc = auc(recall, precision)
+    pr_aucs.append(pr_auc)
+    
     # Update best_k and best_f1 if a better F1 score is found
     if f1 > best_f1:
         best_k = k
@@ -86,42 +91,42 @@ for i, k in enumerate(k_values):
     progress = (i + 1) / len(k_values) * 100
     print(f"Progress: {progress:.2f}%")
 
+# Plot F1 score, accuracy, and precision-recall AUC for different k values
+plt.figure(figsize=(10, 6))
+plt.plot(k_values, f1_scores, marker='o', linestyle='-', label='F1 Score')
+plt.plot(k_values, accuracy_scores, marker='o', linestyle='-', label='Accuracy')
+plt.plot(k_values, pr_aucs, marker='o', linestyle='-', label='Precision-Recall AUC')
+plt.xlabel('K Value')
+plt.ylabel('Score')
+plt.xticks(k_values)
+plt.title('Hyperparameter Tuning for KNN (Choose K)')
+plt.legend()
+plt.show()
+
 # Train the KNN model with the best k value based on F1 score
 best_knn_classifier = KNeighborsClassifier(n_neighbors=best_k)
 best_knn_classifier.fit(xTrain, yTrain)
 
-# Evaluate the best model and calculate F1 score and AUROC
+# Evaluate the best model and calculate F1 score, precision, and recall
 y_pred_best = best_knn_classifier.predict(xTest)
 classification_rep = classification_report(yTest, y_pred_best)
 
-fpr_best, tpr_best, _ = roc_curve(yTest, best_knn_classifier.predict_proba(xTest)[:,1])
-roc_auc_best = auc(fpr_best, tpr_best)
+# Calculate precision and recall for the best model
+precision, recall, _ = precision_recall_curve(yTest, best_knn_classifier.predict_proba(xTest)[:,1])
+pr_auc = auc(recall, precision)
 
-# Plot F1 score for different k values
-plt.figure(figsize=(6, 4))
-plt.plot(k_values, f1_scores, marker='o', linestyle='-', label='F1 Score')
-plt.plot(k_values, accuracy_scores, marker='o', linestyle='-', label='Accuracy')  # Adding accuracy to the plot
-plt.xlabel('K Value')
-plt.ylabel('Score')
-plt.xticks(k_values, 5)
-plt.title('F1 Score and Accuracy vs. K Value')
-plt.legend()
+# Plot Precision-Recall curve for the best model
+plt.figure()
+plt.plot(recall, precision, color='darkorange', lw=2, label='Precision-Recall curve (area = {:.2f})'.format(pr_auc))
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title('Precision-Recall Curve (Best Model)')
+plt.legend(loc='lower left')
 plt.show()
 
-# Display the best k value and evaluation metrics
+# Display the best k value, evaluation metrics, and precision-recall AUC
 print(f"Best K Value (Based on F1 Score): {best_k}")
 print(f"F1 Score: {best_f1:.2f}")
 print(f"Accuracy: {best_accuracy:.2f}")
 print(f"Classification Report:\n{classification_rep}")
-
-# Plot the ROC curve for the best model
-plt.figure()
-plt.plot(fpr_best, tpr_best, color='darkorange', lw=2, label='ROC curve (area = {:.2f})'.format(roc_auc_best))
-plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('Receiver Operating Characteristic (Best Model)')
-plt.legend(loc='lower right')
-plt.show()
+print(f"Precision-Recall AUC: {pr_auc:.2f}")
