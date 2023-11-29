@@ -33,7 +33,7 @@ model = CustomClassifier(base_model, num_labels=NUM_LABELS)
 
 # Load and tokenize the dataset
 tokenizer = AutoTokenizer.from_pretrained('Twitter/twhin-bert-base')
-file_path = '../data/train_data.csv' 
+file_path = '../data/train_data_removed.csv' 
 dataset = load_dataset('csv', data_files={'train': file_path})
 
 def tokenize_function(examples):
@@ -84,6 +84,6 @@ trainer.train()
 # Save the model and tokenizer
 # model.save_pretrained("./twhin_trained")
 
-torch.save(model.state_dict(), 'custom_classifier_state.pth')
-model.base_model.save_pretrained('./twhin_trained')
-tokenizer.save_pretrained("./twhin_trained")
+torch.save(model.state_dict(), 'custom_classifier_state_removed.pth')
+model.base_model.save_pretrained('./twhin_trained_removed')
+tokenizer.save_pretrained("./twhin_trained_removed")

@@ -2,21 +2,21 @@ from transformers import BertForSequenceClassification, BertTokenizer, pipeline
 from datasets import load_dataset
 import torch
 
-model = BertForSequenceClassification.from_pretrained("../BERT_trained")
-tokenizer = BertTokenizer.from_pretrained("../BERT_trained")
+model = BertForSequenceClassification.from_pretrained("../BERT_trained_removed")
+tokenizer = BertTokenizer.from_pretrained("../BERT_trained_removed")
 
-# nlp = pipeline("text-classification", model=model, tokenizer=tokenizer)
+nlp = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
-# sample_text = "I am want to jump "
-# prediction = nlp(sample_text)
+sample_text = "You are a stupid gucking little shit go die in a hole you fuck"
+prediction = nlp(sample_text)
 
-# print(prediction)
+print(prediction)
 
 
 def tokenize_function(examples):
     return tokenizer(examples['tweet_text'], padding='max_length', truncation=True, max_length=128)
 
-file_path = '../../data/test_data.csv' 
+file_path = '../../data/test_data_removed.csv' 
 dataset = load_dataset('csv', data_files={'test': file_path})
 
 tokenized_test = dataset.map(tokenize_function, batched=True)

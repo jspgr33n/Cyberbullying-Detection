@@ -1,6 +1,10 @@
 BERT_trained/
 BERT_test_trained/
 BERT2_trained/
+BERT_trained_removed/
+RoBERTa_trained_removed/
+twhin_trained_removed/
 RoBERTa_trained/
 twhin_trained/
 custom_classifier_state.pth
+custom_classifier_state_removed.pth

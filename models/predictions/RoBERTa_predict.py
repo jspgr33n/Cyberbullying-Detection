@@ -2,8 +2,8 @@ from transformers import RobertaForSequenceClassification, RobertaTokenizer, pip
 from datasets import load_dataset
 import torch
 
-model = RobertaForSequenceClassification.from_pretrained("../RoBERTa_trained")
-tokenizer = RobertaTokenizer.from_pretrained("../RoBERTa_trained")
+model = RobertaForSequenceClassification.from_pretrained("../RoBERTa_trained_removed")
+tokenizer = RobertaTokenizer.from_pretrained("../RoBERTa_trained_removed")
 
 # nlp = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
@@ -16,7 +16,7 @@ tokenizer = RobertaTokenizer.from_pretrained("../RoBERTa_trained")
 def tokenize_function(examples):
     return tokenizer(examples['tweet_text'], padding='max_length', truncation=True, max_length=128)
 
-file_path = '../../data/test_data.csv' 
+file_path = '../../data/test_data_removed.csv' 
 dataset = load_dataset('csv', data_files={'test': file_path})
 
 tokenized_test = dataset.map(tokenize_function, batched=True)
