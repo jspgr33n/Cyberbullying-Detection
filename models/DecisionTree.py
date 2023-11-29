@@ -4,6 +4,7 @@ from gensim.models import Word2Vec
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
 
 # Load the dataset
 df = pd.read_csv('../data/updated_cyberbullying_data.csv')
@@ -35,10 +36,23 @@ X = np.nan_to_num(X)
 # Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train a Decision Tree classifier
-model = DecisionTreeClassifier()
-model.fit(X_train, y_train)
+# Define the parameter grid for the grid search
+param_grid = {
+    'min_samples_leaf': range(1, 101),
+    'max_depth': range(1, 101)
+}
 
-# Evaluate the model
-predictions = model.predict(X_test)
+# Initialize Decision Tree classifier
+dt_classifier = DecisionTreeClassifier()
+
+# Perform grid search using cross-validation with progress printing
+grid_search = GridSearchCV(dt_classifier, param_grid, cv=5, scoring='accuracy', verbose=2, n_jobs=-1)
+grid_search.fit(X_train, y_train)
+
+# Print the best parameters
+print("Best Parameters:", grid_search.best_params_)
+
+# Evaluate the model with the best parameters
+best_model = grid_search.best_estimator_
+predictions = best_model.predict(X_test)
 print(classification_report(y_test, predictions))
