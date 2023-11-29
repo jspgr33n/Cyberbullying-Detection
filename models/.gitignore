@@ -8,3 +8,8 @@ RoBERTa_trained/
 twhin_trained/
 custom_classifier_state.pth
 custom_classifier_state_removed.pth
+
+logs/
+logs_RoBERTa/
+logs_twhin/
+graphing/
