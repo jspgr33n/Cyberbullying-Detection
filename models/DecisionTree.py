@@ -7,7 +7,7 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 
 # Load the dataset
-df = pd.read_csv('../data/updated_cyberbullying_data.csv')
+df = pd.read_csv('../data/removed_knn_csv.csv')
 
 print(df.head)
 # Assuming 'text' column contains preprocessed text and 'label' column contains labels
