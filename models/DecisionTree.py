@@ -80,9 +80,10 @@ plt.show()
 # # Initialize Decision Tree classifier
 # dt_classifier = DecisionTreeClassifier()
 
-# Perform grid search using cross-validation with progress printing
-grid_search = GridSearchCV(dt_classifier, param_grid, cv=5, scoring='accuracy', verbose=2, n_jobs=-1)
-grid_search.fit(X_train, y_train)
+
+# # Perform grid search using cross-validation with progress printing
+# grid_search = GridSearchCV(dt_classifier, param_grid, cv=5, scoring='accuracy', verbose=2, n_jobs=-1)
+# grid_search.fit(X_train, y_train)
 
 # # Print the best parameters
 # print("Best Parameters:", grid_search.best_params_)

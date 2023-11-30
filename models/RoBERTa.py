@@ -31,13 +31,13 @@ tokenized_valid.set_format(type="torch", columns=["input_ids", "attention_mask",
 # tokenized_test.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
 
 training_args = TrainingArguments(
-    output_dir="./results",
+    output_dir="results_RoBERTa",
     num_train_epochs=3,
     per_device_train_batch_size=16,
     per_device_eval_batch_size=64,
     warmup_steps=500,
     weight_decay=0.01,
-    logging_dir='./logs',
+    logging_dir='logs_RoBERTa',
     logging_steps=10,
     evaluation_strategy="steps",
     save_steps=10_000,
