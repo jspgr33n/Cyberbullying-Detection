@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, classification_report
 import numpy as np
 
-loaded_base_model = AutoModel.from_pretrained('../twhin_trained_removed')
+loaded_base_model = AutoModel.from_pretrained('../twhin_trained')
 
 class CustomClassifier(nn.Module):
     def __init__(self, base_model, num_labels):
@@ -28,12 +28,12 @@ class CustomClassifier(nn.Module):
         return loss, logits
     
 model = CustomClassifier(loaded_base_model, 2)
-model = CustomClassifier(AutoModel.from_pretrained('../twhin_trained_removed'), 2)
-model.load_state_dict(torch.load('../custom_classifier_state_removed.pth'))
+model = CustomClassifier(AutoModel.from_pretrained('../twhin_trained'), 2)
+model.load_state_dict(torch.load('../custom_classifier_state.pth'))
 model.eval()
 
 # Load and preprocess the test data
-tokenizer = AutoTokenizer.from_pretrained('../twhin_trained_removed')
+tokenizer = AutoTokenizer.from_pretrained('../twhin_trained')
 test_file_path = '../../data/test_data_removed.csv'
 test_dataset = load_dataset('csv', data_files={'test': test_file_path})
 
@@ -66,5 +66,5 @@ all_predictions = np.array(all_predictions)
 all_true_labels = np.array(all_true_labels)
 
 # Generate the classification report
-report = classification_report(all_true_labels, all_predictions, target_names=['Class 0', 'Class 1'])  # Adjust target names as per your classes
+report = classification_report(all_true_labels, all_predictions, target_names=['Class 0', 'Class 1'], digits=4)  # Adjust target names as per your classes
 print(report)

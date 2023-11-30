@@ -2,8 +2,8 @@ from transformers import RobertaForSequenceClassification, RobertaTokenizer, pip
 from datasets import load_dataset
 import torch
 
-model = RobertaForSequenceClassification.from_pretrained("../RoBERTa_trained_removed")
-tokenizer = RobertaTokenizer.from_pretrained("../RoBERTa_trained_removed")
+model = RobertaForSequenceClassification.from_pretrained("../RoBERTa_trained")
+tokenizer = RobertaTokenizer.from_pretrained("../RoBERTa_trained")
 
 # nlp = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
@@ -16,7 +16,7 @@ tokenizer = RobertaTokenizer.from_pretrained("../RoBERTa_trained_removed")
 def tokenize_function(examples):
     return tokenizer(examples['tweet_text'], padding='max_length', truncation=True, max_length=128)
 
-file_path = '../../data/test_data_removed.csv' 
+file_path = '../../data/test_data.csv' 
 dataset = load_dataset('csv', data_files={'test': file_path})
 
 tokenized_test = dataset.map(tokenize_function, batched=True)
@@ -46,5 +46,5 @@ from sklearn.metrics import accuracy_score, classification_report
 accuracy = accuracy_score(actual_labels, predictions)
 print(f'Accuracy: {accuracy}')
 
-class_report = classification_report(actual_labels, predictions)
+class_report = classification_report(actual_labels, predictions,digits=4)
 print("\nClassification Report:\n", class_report)

@@ -2,28 +2,28 @@ from transformers import BertForSequenceClassification, BertTokenizer, pipeline
 from datasets import load_dataset
 import torch
 
-model = BertForSequenceClassification.from_pretrained("../BERT_trained_removed")
-tokenizer = BertTokenizer.from_pretrained("../BERT_trained_removed")
+model = BertForSequenceClassification.from_pretrained("../BERT_trained")
+tokenizer = BertTokenizer.from_pretrained("../BERT_trained")
 
-nlp = pipeline("text-classification", model=model, tokenizer=tokenizer)
+# nlp = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
-sample_text = "You are a stupid gucking little shit go die in a hole you fuck"
-prediction = nlp(sample_text)
+# sample_text = "You are a stupid gucking little shit go die in a hole you fuck"
+# prediction = nlp(sample_text)
 
-print(prediction)
+# print(prediction)
 
 
 def tokenize_function(examples):
     return tokenizer(examples['tweet_text'], padding='max_length', truncation=True, max_length=128)
 
-file_path = '../../data/test_data_removed.csv' 
+file_path = '../../data/test_data.csv' 
 dataset = load_dataset('csv', data_files={'test': file_path})
 
 tokenized_test = dataset.map(tokenize_function, batched=True)
 
 tokenized_test.set_format(type="torch", columns=["input_ids", "attention_mask", "token_type_ids", "labels"])
 
-# print(tokenized_test['test'][0])
+print(tokenized_test['test'][0])
 
 from torch.utils.data import DataLoader
 
@@ -47,5 +47,5 @@ from sklearn.metrics import accuracy_score, classification_report
 accuracy = accuracy_score(actual_labels, predictions)
 print(f'Accuracy: {accuracy}')
 
-class_report = classification_report(actual_labels, predictions)
+class_report = classification_report(actual_labels, predictions, digits=4)
 print("\nClassification Report:\n", class_report)

@@ -45,14 +45,18 @@ param_grid = {
 # Initialize Decision Tree classifier
 dt_classifier = DecisionTreeClassifier()
 
-# Perform grid search using cross-validation with progress printing
-grid_search = GridSearchCV(dt_classifier, param_grid, cv=5, scoring='accuracy', verbose=2, n_jobs=-1)
-grid_search.fit(X_train, y_train)
 
-# Print the best parameters
-print("Best Parameters:", grid_search.best_params_)
 
-# Evaluate the model with the best parameters
-best_model = grid_search.best_estimator_
-predictions = best_model.predict(X_test)
-print(classification_report(y_test, predictions))
+
+
+# # Perform grid search using cross-validation with progress printing
+# grid_search = GridSearchCV(dt_classifier, param_grid, cv=5, scoring='accuracy', verbose=2, n_jobs=-1)
+# grid_search.fit(X_train, y_train)
+
+# # Print the best parameters
+# print("Best Parameters:", grid_search.best_params_)
+
+# # Evaluate the model with the best parameters
+# best_model = grid_search.best_estimator_
+# predictions = best_model.predict(X_test)
+# print(classification_report(y_test, predictions))
