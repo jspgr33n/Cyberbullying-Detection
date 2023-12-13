@@ -3,10 +3,8 @@ from torch import nn
 from transformers import AutoTokenizer, AutoModel, Trainer, TrainingArguments, DataCollatorWithPadding
 from datasets import load_dataset
 
-# Load the pre-trained model
 base_model = AutoModel.from_pretrained('Twitter/twhin-bert-base')
 
-# Create a custom model with a classification head
 class CustomClassifier(nn.Module):
     def __init__(self, base_model, num_labels):
         super(CustomClassifier, self).__init__()
@@ -26,8 +24,7 @@ class CustomClassifier(nn.Module):
 
         return loss, logits
 
-# Specify the number of labels for your classification task
-NUM_LABELS = 2  # Adjust according to your dataset
+NUM_LABELS = 2  
 
 model = CustomClassifier(base_model, num_labels=NUM_LABELS)
 
@@ -46,14 +43,11 @@ valid_dataset = train_valid_split['test']
 tokenized_train = train_dataset.map(tokenize_function, batched=True)
 tokenized_valid = valid_dataset.map(tokenize_function, batched=True)
 
-# Ensure labels are included in the tokenized datasets
 tokenized_train = tokenized_train.map(lambda examples: {'labels': examples['labels']}, batched=True)
 tokenized_valid = tokenized_valid.map(lambda examples: {'labels': examples['labels']}, batched=True)
 
-# Data collator
 data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
-# Training arguments
 training_args = TrainingArguments(
     output_dir="results_twhin",
     num_train_epochs= 3,
@@ -68,7 +62,6 @@ training_args = TrainingArguments(
     eval_steps=500
 )
 
-# Trainer
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -78,10 +71,8 @@ trainer = Trainer(
     tokenizer=tokenizer,
 )
 
-# Train the model
 trainer.train()
 
-# Save the model and tokenizer
 # model.save_pretrained("./twhin_trained")
 
 torch.save(model.state_dict(), 'custom_classifier_state_removed.pth')

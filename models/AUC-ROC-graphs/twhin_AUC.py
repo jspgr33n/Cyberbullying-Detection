@@ -14,7 +14,6 @@ tokenized_test = dataset.map(lambda examples: tokenizer(examples['tweet_text'], 
 tokenized_test.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
 test_dataloader = DataLoader(tokenized_test['test'], batch_size=16)
 
-# Evaluate the model
 model.eval() 
 softmax = torch.nn.Softmax(dim=1)
 
@@ -29,14 +28,11 @@ with torch.no_grad():
         all_probs.extend(probs[:, 1].tolist()) 
         all_labels.extend(batch['labels'].tolist())
 
-# Calculate ROC-AUC
 roc_auc = roc_auc_score(all_labels, all_probs)
 print(f"ROC-AUC Score: {roc_auc}")
 
-# Compute ROC curve
 fpr, tpr, thresholds = roc_curve(all_labels, all_probs)
 
-# Plot ROC curve
 plt.figure()
 plt.plot(fpr, tpr, label='ROC Curve (area = %0.4f)' % roc_auc)
 plt.plot([0, 1], [0, 1], 'k--')  

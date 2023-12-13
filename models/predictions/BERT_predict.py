@@ -34,7 +34,6 @@ model.eval()
 predictions = []
 actual_labels = []
 
-# Disable gradient calculations
 with torch.no_grad():
     for batch in test_dataloader:
         outputs = model(input_ids=batch['input_ids'], attention_mask=batch['attention_mask'])
@@ -42,6 +41,9 @@ with torch.no_grad():
         predictions.extend(torch.argmax(logits, dim=1).tolist())
         actual_labels.extend(batch['labels'].tolist())
 
+
+print( predictions[:10])
+print(actual_labels[:10])
 from sklearn.metrics import accuracy_score, classification_report
 
 accuracy = accuracy_score(actual_labels, predictions)

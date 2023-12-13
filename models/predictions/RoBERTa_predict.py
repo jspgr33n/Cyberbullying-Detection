@@ -33,7 +33,6 @@ model.eval()
 predictions = []
 actual_labels = []
 
-# Disable gradient calculations
 with torch.no_grad():
     for batch in test_dataloader:
         outputs = model(input_ids=batch['input_ids'], attention_mask=batch['attention_mask'])

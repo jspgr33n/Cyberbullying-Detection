@@ -9,7 +9,7 @@ model = BertForSequenceClassification.from_pretrained('bert-base-uncased')
 def tokenize_function(examples):
     return tokenizer(examples['tweet_text'], padding='max_length', truncation=True, max_length=128)
 
-file_path = '../data/train_data_removed.csv'  
+file_path = '../data/train_data.csv'  
 dataset = load_dataset('csv', data_files={'train': file_path})
 
 train_valid_split = dataset['train'].train_test_split(test_size=0.2)

@@ -14,9 +14,7 @@ tokenizer = BertTokenizer.from_pretrained("../BERT2_trained")
 
 
 def tokenize_function(examples):
-    # Assuming 'tweet_text' is the key for your text data
     texts = examples['tweet_text']
-    # Ensure all texts are strings and handle missing or anomalous data
     texts = [text if isinstance(text, str) else "" for text in texts]
     return tokenizer(texts, padding='max_length', truncation=True, max_length=128)
 
