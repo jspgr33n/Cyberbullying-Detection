@@ -37,7 +37,7 @@ X = np.nan_to_num(X)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Best parameters without performing grid search
-best_params = {'max_depth': 9, 'min_samples_leaf': 22}
+best_params = {'max_depth': 27, 'min_samples_leaf': 12}
 
 # Initialize Decision Tree classifier with the best parameters
 best_model = DecisionTreeClassifier(**best_params)

@@ -40,46 +40,43 @@ def compute_doc_embedding(text, model):
 xTrain_embeddings = [compute_doc_embedding(text, word2vec_model) for text in xTrain]
 xTest_embeddings = [compute_doc_embedding(text, word2vec_model) for text in xTest]
 
-# Define hyperparameters for grid search
-# param_grid = {
-#     'C': [0.001, 0.01, 0.1, 1, 10, 100],  # Regularization strength
-#     'penalty': ['l1', 'l2'],  # Penalty type (L1 or L2)
-#     'solver': ['liblinear', 'newton-cg', 'lbfgs', 'sag', 'saga'],  # Solver
-#     'class_weight': [None, 'balanced'],  # Class weights
-#     'max_iter': [100]  # Maximum iterations
-# }
+# Define a range of C values (learning rates) for logistic regression
+c_values = [0.001, 0.01, 0.1, 1, 10, 100]
 
-# # Create a Logistic Regression model
-# logistic_regression = LogisticRegression()
+# Initialize lists to store accuracy scores
+accuracy_scores = []
 
-# # Perform grid search with cross-validation and progress printing
-# grid_search = GridSearchCV(estimator=logistic_regression, param_grid=param_grid, cv=5, scoring='accuracy', verbose=2, n_jobs=-1)
+# Iterate over different C values
+for c in c_values:
+    # Create a logistic regression model with the current C value
+    logistic_regression = LogisticRegression(C=c, class_weight=None, max_iter=100, solver='liblinear', penalty='l2')
+    
+    # Train the model on the document embeddings of the training data
+    logistic_regression.fit(xTrain_embeddings, yTrain)
+    
+    # Make predictions on the document embeddings of the testing data
+    y_pred = logistic_regression.predict(xTest_embeddings)
+    
+    # Calculate accuracy
+    accuracy = accuracy_score(yTest, y_pred)
+    accuracy_scores.append(accuracy)
 
-# # Fit the grid search to your training data
-# grid_search.fit(xTrain_embeddings, yTrain)
+# Plot accuracy against different C values
+plt.figure(figsize=(8, 6))
+plt.semilogx(c_values, accuracy_scores, marker='o', linestyle='-')
+plt.xlabel('C Value (Log Scale)')
+plt.ylabel('Accuracy')
+plt.title('Accuracy vs. Learning Rate (Logistic Regression)')
+plt.grid(True)
+plt.show()
 
-# Get the best hyperparameters
-best_params = {'C': 100, 'class_weight': None, 'max_iter': 100, 'penalty': 'l2', 'solver': 'liblinear'}
+# Find the C value with the highest accuracy
+best_c = c_values[np.argmax(accuracy_scores)]
+
+best_params = {'C': best_c, 'class_weight': None, 'max_iter': 100, 'penalty': 'l2', 'solver': 'liblinear'}
 
 # Create a logistic regression model with the best hyperparameters
 best_logistic_regression = LogisticRegression(**best_params)
-
-# Train the best model on the document embeddings of the training data
-best_logistic_regression.fit(xTrain_embeddings, yTrain)
-
-# Make predictions on the document embeddings of the testing data
-y_pred = best_logistic_regression.predict(xTest_embeddings)
-
-# Evaluate the best model
-accuracy = accuracy_score(yTest, y_pred)
-classification_rep = classification_report(yTest, y_pred)
-
-# Display evaluation metrics and classification report
-print(f"Best Hyperparameters: {best_params}")
-print(f"Accuracy: {accuracy:.2f}")
-print("Classification Report:")
-print(classification_rep)
-
 
 # Train the best model on the document embeddings of the training data
 best_logistic_regression.fit(xTrain_embeddings, yTrain)
