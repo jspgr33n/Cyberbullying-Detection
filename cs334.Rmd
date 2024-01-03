@@ -1,0 +1,40 @@
+---
+title: "cs334"
+output: html_document
+date: "2023-11-27"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+
+df <- read.csv("/Users/jspgr33n/Desktop/CS 334/mlFinalProject/data/updated_cyberbullying_data_word2vec_embedding.csv")
+
+combined <- read.csv("/Users/jspgr33n/Desktop/CS 334/mlFinalProject/data/combined_csv.csv")
+
+df %>%
+  group_by(cyberbullying_type) %>%
+  summarize(count = n())
+
+# Find the row with the longest text in the "text_column"
+row_with_longest_text <- which.max(nchar(df$tweet_text))
+
+# Get the longest text and its length
+longest_text <- df$tweet_text[row_with_longest_text]
+text_length <- nchar(longest_text)
+
+# Display the longest text and its length
+cat("Longest Text: ", longest_text, "\n")
+cat("Length of Longest Text: ", text_length, " characters\n")
+
+# removing CB datapoints so count for nonCB = CB
+
+df_filtered <- df[-which(head(df$cyberbullying_type == 1, 39747)), ]
+
+df_filtered %>%
+  group_by(cyberbullying_type) %>%
+  summarize(count = n())
+  
+write.csv(df_filtered, "/Users/jspgr33n/Desktop/CS 334/mlFinalProject/data/removed_knn_csv.csv")
+```
