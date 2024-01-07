@@ -20,7 +20,7 @@ Click here to check out our final presentation for the project:
 Click here to check out our final report for the project:
 </br>
 </br>
-<a href="https://github.com/jspgr33n/Cyberbullying-Detection/blob/main/CS%20334%20Presentation.pdf](https://github.com/jspgr33n/Cyberbullying-Detection/blob/main/CS%20334%20Final%20Report.pdf">
+<a href="https://github.com/jspgr33n/Cyberbullying-Detection/blob/main/CS%20334%20Presentation.pdf">
   <img src="https://github.com/jspgr33n/Cyberbullying-Detection/assets/70019194/7694315b-d5e7-4077-abde-b7b4277f609a"
  alt="Project Presentation" width="320" height="200">
 </a>
