@@ -43,7 +43,70 @@ Since we are looking to classify cyberbullying and non-cyberbullying in a binary
 **TwHIN-BERT-base**
 - TwHIN-BERT-base is a BERT model that has been pre-trained on the Twitter corpus, and functionally is not different from BERT, as it follows the same model architecture.
 
-## Results
+## Experiments/Results
+
+To answer the question which model detects cyberbullying the best, we needed to find a dataset that we could use, preprocess this data, and run classification tests on this data to compare the results.
+
+**Data Description**
+
+“Cyberbullying Classification” from Kaggle is a dataset of 46,017 unique tweet texts scraped from twitter.com. The dataset originates from J. Wang, K. Fu, and C.T. Lu’s paper “SOSNet: A Graph Convolutional Network Approach to Fine-Grained Cyberbullying Detection.” There are two main categories, the first column being the tweet itself, and the second column being the classification of the tweet as not cyberbullying or the type of cyberbullying: age, religion, gender, ethnicity, other cyberbullying. The tweets were classified by humans. For this project, we will need to first preprocess the text data, as it is currently untokenized and some contain unnecessary parts such as the usernames or other outlying punctuation. We will also need to change the types to solely be two types, cyberbullying and not cyberbullying, as we are just interested in classifying messages as either or. The original dataset was edited so that there would be an equal amount of cyberbullying and  non-cyberbullying examples (now approximately 15,000 entries); random cyberbullying examples were removed to match the count of the other. We deemed that this would be fine in this case, as we are not classifying the type of cyberbullying.
+
+**Preprocessing**
+
+Since we used text data, preprocessing involved various steps: standardization, tokenization, word-embedding, and binary classification. Standardization involves altering the text so that the models can easily interpret the data: removing NA values, stop words, special characters, and lowercasing all words. We then split the text into individual tokens using the The Natural Language Toolkit, more commonly known as NLTK, a suite of libraries and programs for symbolic and statistical natural language processing. We used the Word2Vec method for generating word embeddings from training data (an 80% split from the full set). We thought that Word2Vec embeddings would be better than GloVe, another traditional word embedding method for semantic analysis, as Word2Vec training is often faster and requires less memory compared to GloVe; it is more efficient, especially for smaller datasets. Given the classification column, we also classified not cyberbullying and cyberbullying as binary values (0 and 1, respectively) for easier analysis and recording when using the different model types.
+
+**Modeling Choices**
+
+KNN, Logistic Regression, and the Decision Tree models were specifically chosen as the goal of this experiment was to detect if a tweet was considered to be cyber harassment or not, and these models are utilized in many different binary classification tasks. The three transformer based models, BERT-base, RoBERTa-base, and TwHIN-BERT-base were chosen as these models are often utilized in NLP tasks, and in this case were used to understand tweets and classify them in relation to cyber harassment. To train the models, random hyperparameters were initially chosen, and were later fine-tuned for the KNN, Decision Tree, Logistic Regression models. For the transformer models, we deemed that hyperparameter tuning was not necessary, as the models reached efficient performances with just the initial parameters. After finding the optimal hyperparameters for KNN, Decision Tree, and Logistic Regression, we tested each model utilizing F1, precision, recall, and accuracy scores, comparing results to each other. By far, the best performing models were the three transformer models. 
+
+**KNN**
+
+Hyperparameter Tuning: 
+```ruby
+param_grid = {
+     'n_neighbors': range(1, 31, 2),
+     'weights': [‘uniform’, ‘distance’]
+}
+```
+Best Hyperparameters:
+```ruby
+{'n_neighbors’: 3, 'weights': distance}
+```
+
+**Decision Tree**
+
+Hyperparameter Tuning: 
+```ruby
+param_grid = {
+     'min_samples_leaf': range(1, 101),
+     'max_depth': range(1, 101)
+}
+```
+Best Hyperparameters:
+```ruby
+{'max_depth': 27, 'min_samples_leaf': 12}
+```
+
+**Logistic Regression**
+
+Hyperparameter Tuning: 
+```ruby
+param_grid = {
+     'C': [0.001, 0.01, 0.1, 1, 10, 100], 
+     'penalty': ['l1', 'l2'], 
+     'solver': ['liblinear', 'newton-cg', 'lbfgs',   'sag', 'saga'],
+     'class_weight': [None, 'balanced'],
+     'max_iter': [100]
+}
+```
+Best Hyperparameters:
+```ruby
+{'C': 100, 'class_weight': None, 'max_iter': 100, 'penalty': 'l2', 'solver': 'liblinear'}
+```
+
+**Empirical Results**
+
+<img width="516" alt="image" src="https://github.com/jspgr33n/Cyberbullying-Detection/assets/70019194/05f4ca97-1c98-4db7-9a25-29a9eb44caf1">
 
 In order to evaluate the models, we utilized accuracy, precision, recall, and F1 scores for accurate and clear comparison. As we utilized a dataset with equal division of each of the classifications, accuracy was used as a measure of model performance. We also utilized F1 scores to get  perspective  on  incorrectly   classified classes. Precision was used to check how correct the model was when predicting the target class. Recall was used to show whether a model could find all objects of the target class.  AUROC was utilized to visualize the performance of the models based on the rate of accuracy in relation to the effectiveness of the binary classification. For simplicity, we show F1 score (representing precision and recall), accuracy, and AUROC scores in the table below:
 
@@ -59,7 +122,7 @@ In order to evaluate the models, we utilized accuracy, precision, recall, and F1
 
 From the six models, it is evident that the three transformer models vastly outperform the other three other classification models. The transformer models reach an accuracy of 99% respectively, with Decision Tree and KNN falling slightly short at 85% and 79% accuracy respectively. By far the worst performing model was Logistic Regression, giving both the worst accuracy and F1 scores of all six models. In general, the transformer models give the most consistent and accurate results from when tested on the Kaggle dataset.
 
-> For a more in depth explanation of hyperparameter tuning, ROC curves, and results/conclusions, please take a look at the project final report!
+> For a more in depth explanation of procedures, dataset, and conclusion, please take a look at the project final report!
 
 ## Project Final Presentation
 Click here to check out our final presentation for the project:
