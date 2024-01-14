@@ -1,6 +1,5 @@
-# Overview
-
-<strong> Detecting Cyberbullying: Jin Seok Park, Andrew Chung </strong>
+# Evaluation of the Effectiveness of Different ML Models on Detecting Cyber Harassment
+> Jin Seok Park, Andrew Chung
 
 People use social media and the internet on a day-to-day basis, including a vast majority of students (children and teenagers). 
 With the rise of COVID-19 and more people spending time online, cyberbullying has reached an all time high. Since we are college students, 
@@ -43,6 +42,24 @@ Since we are looking to classify cyberbullying and non-cyberbullying in a binary
 
 **TwHIN-BERT-base**
 - TwHIN-BERT-base is a BERT model that has been pre-trained on the Twitter corpus, and functionally is not different from BERT, as it follows the same model architecture.
+
+## Results
+
+In order to evaluate the models, we utilized accuracy, precision, recall, and F1 scores for accurate and clear comparison. As we utilized a dataset with equal division of each of the classifications, accuracy was used as a measure of model performance. We also utilized F1 scores to get  perspective  on  incorrectly   classified classes. Precision was used to check how correct the model was when predicting the target class. Recall was used to show whether a model could find all objects of the target class.  AUROC was utilized to visualize the performance of the models based on the rate of accuracy in relation to the effectiveness of the binary classification. For simplicity, we show F1 score (representing precision and recall), accuracy, and AUROC scores in the table below:
+
+| Model | Accuracy | F1 score    | AUROC |
+|-------|----------|-------------|-------|
+| KNN   | 79%      | 74%/82%     | 0.87  |
+| DT    | 85%      | 85%/84%     | 0.90  |
+| LR    | 64%      | 67%/59%     | 0.66  |
+| BERT  | 99%      | 99%/99%     | 0.99  |
+| RoBERTa | 99%    | 99%/99%     | 0.99  |
+| TwHIN | 99%      | 99%/99%     | 0.99  |
+> Table representing the accuracy, F1 score for both of the classes (no cyberbullying on the left, cyberbullying on the right) and the AUROC score. This was utilized for performance evaluation.
+
+From the six models, it is evident that the three transformer models vastly outperform the other three other classification models. The transformer models reach an accuracy of 99% respectively, with Decision Tree and KNN falling slightly short at 85% and 79% accuracy respectively. By far the worst performing model was Logistic Regression, giving both the worst accuracy and F1 scores of all six models. In general, the transformer models give the most consistent and accurate results from when tested on the Kaggle dataset.
+
+> For a more in depth explanation of hyperparameter tuning, ROC curves, and results/conclusions, please take a look at the project final report!
 
 ## Project Final Presentation
 Click here to check out our final presentation for the project:
